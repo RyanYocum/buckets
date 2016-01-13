@@ -77,9 +77,8 @@
 					}
 					// if not all the water can be placed in the second bucket, fill it and leave the leftovers
 					if (buck1Curr + buck2Curr > otherBucket) {
-						var temp = buck1Curr + buck2Curr - otherBucket;
+						buck1Curr = buck1Curr + buck2Curr - otherBucket;
 						buck2Curr = otherBucket;
-						buck1Curr = temp;
 						filled2 = true;
 						filled1 = 1;
 						i++
