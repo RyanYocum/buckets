@@ -1,20 +1,22 @@
-function () {
-	const buck1 = parseInt(process.args[2]);
-	const buck2 = parseInt(process.args[3]);
-	const desired = parseInt(process.args[4]);
+
+	const buck1 = parseInt(process.argv[2]);
+	const buck2 = parseInt(process.argv[3]);
+	const desired = parseInt(process.argv[4]);
 
 	// if the buckets are multiples of each other and the desired amount is not
 	// the desired amount can never be reached
 	if (buck1 % buck2 == 0 || buck2 % buck1 == 0) {
 		if (desired % buck1 != 0 && desired % buck2 != 0) {
-			return "current combination is impossible";
+			console.log("current combination is impossible");
+			return
 		}
 	}
 	// if the desired amount is larger than either bucket it can never be reached
 	if (desired > buck1 && desired > buck2) {
-		return "current combination is impossible"
+		console.log("current combination is impossible");
+		return
 	}
-	function bleh (startBucket, otherBucket) {
+	function iterationCalc (startBucket, otherBucket) {
 		var i = 0;
 		// filled1 will have values 0 1 or 2
 		// 0 means empty
@@ -37,39 +39,68 @@ function () {
 				// if both buckets are empty, fill the first bucket
 				if (filled1 == 0) {
 					buck1Curr = startBucket;
-					filled1 = true;
+					filled1 = 2;
 					i++;
 					continue;
 				}
-				// else if (filled1 == 1) {
-				// 	buck2Curr += buck
+				// if bucket 1 is partially full transfer its contents to the second bucket
+				else if (filled1 == 1) {
+					if (buck1Curr <= otherBucket) {
+						buck2Curr = buck1Curr;
+						buck1Curr = 0;
+						filled1 = 0;
+						i++;
+						continue;
+					}
+					// if that contents fills the bucket, leave the leftovers
+					else {
+						buck1Curr -= otherBucket;
+						buck2Curr = otherBucket;
+						filled2 = true;
+						i++;
+						continue
+					}
 				}
 				// if the first bucket is full, use it to add water to the second
-
-
-					// var temp = transfer(buck1Curr, buck2Curr, startBucket, otherBucket)
-					// buck1Curr = temp[0];
-					// buck2Curr = 
+				else {
+					if (buck1Curr + buck2Curr < otherBucket) {
+						buck2Curr += buck1Curr;
+						buck1Curr = 0;
+						filled1 = 0;
+						i++;
+						continue;
+					}
+					// if not all the water can be placed in the second bucket, fill it and leave the leftovers
+					if (buck1Curr + buck2Curr > otherBucket) {
+						var temp = buck1Curr + buck2Curr - otherBucket;
+						buck2Curr = otherBucket;
+						buck1Curr = temp;
+						filled2 = true;
+						filled1 = 1;
+						i++
+						continue;
+					}
 				}
 			}
-			
 		}
+		return i;
 	}
-	
-}
-
-function transfer (buck1Curr, buck2Curr, buck1Total, buck2Total) {
-	var leftover = buck2Curr + buck1Curr - buck2Total
-	var filled = false
-	if (leftover < 0) {
-		buck2Curr = buck1Curr + buck2Curr
+	var first = iterationCalc(buck1, buck2);
+	var second = iterationCalc(buck2, buck1);
+	if (first < second) {
+		var lowBuck = buck1;
+		var low = first;
+		var diff = second - first;
 	}
-	if (leftover = 0) {
-
+	else if (first > second) {
+		var lowBuck = buck2;
+		var low = second;
+		var diff = first - second;
 	}
 	else {
-		buck1Curr = leftover;
-		buck2Curr = buck2Total;
+		console.log("Starting with either bucket takes " + first + " steps to get the target amount");
+		return
 	}
-	return [buck1Curr, buck2Curr, filled];
-}
+		console.log("Filling the " + lowBuck + " liter bucket first gets the target amount in " + low + " steps");
+		console.log("It is faster than the other bucket by " + diff + " steps");
+		return;
