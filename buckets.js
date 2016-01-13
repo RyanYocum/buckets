@@ -3,6 +3,11 @@
 	const buck2 = parseInt(process.argv[3]);
 	const desired = parseInt(process.argv[4]);
 
+	if (isNaN(buck1) || isNaN(buck2) || isNaN(desired)) {
+		console.log("Please only enter numbers");
+		return
+	}
+
 	// if the buckets are multiples of each other and the desired amount is not
 	// the desired amount can never be reached
 	if (buck1 % buck2 == 0 || buck2 % buck1 == 0) {
